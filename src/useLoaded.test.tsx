@@ -10,141 +10,54 @@ afterAll(() => {
 // Flushes pending promises inside act, so the state update they make renders before the test reads it.
 const settle = () => testing.act(async () => new Promise<void>((resolve) => setTimeout(resolve, 0)))
 
-function deferred<T>() {
-  let resolve: (v: T) => void = () => undefined
-  let reject: (e: unknown) => void = () => undefined
-  const promise = new Promise<T>((res, rej) => {
-    resolve = res
-    reject = rej
-  })
-  return { promise, resolve, reject }
-}
-
-test('loads, then reloads with the same deps', async () => {
+// The ordering rules (newest load wins, reset, keepAcrossKeys, null load, stop) are loader.test.ts's; this is the React
+// wiring: state set from the sink, onError read through the ref, setData, reload, and the unmount stop.
+test('useLoaded wires loader to state, onError, reload and unmount', async () => {
+  let mode: 'good' | 'fail' | 'late' = 'good'
   let n = 0
-  const next = () => {
-    n += 1
-    return Promise.resolve(n)
-  }
-  const { result } = testing.renderHook(() => useLoaded(next, [], 0))
-  expect(result.current.loading).toBe(true)
-  await settle()
-  expect(result.current.data).toBe(1)
-  expect(result.current.loading).toBe(false)
-  await testing.act(() => result.current.reload())
-  await settle()
-  expect(result.current.data).toBe(2)
-})
-
-test('a run superseded by new deps is dropped', async () => {
-  const first = deferred<string>()
-  const second = deferred<string>()
-  const { result, rerender } = testing.renderHook(
-    ({ key }) => useLoaded(() => (key === 'a' ? first.promise : second.promise), [key], ''),
-    { initialProps: { key: 'a' } },
-  )
-  rerender({ key: 'b' })
-  second.resolve('b')
-  await settle()
-  expect(result.current.data).toBe('b')
-  first.resolve('a')
-  await testing.act(() => first.promise)
-  expect(result.current.data).toBe('b')
-})
-
-test('an answer after unmount is ignored and errors reach onError once', async () => {
-  const late = deferred<string>()
+  const boom = new Error('offline')
+  const late = Promise.withResolvers<number>()
   const seen: unknown[] = []
-  const gone = testing.renderHook(() =>
-    useLoaded(
-      () => late.promise,
-      [],
-      '',
-      (e) => seen.push(e),
-    ),
-  )
-  gone.unmount()
-  late.reject(new Error('late'))
-  await late.promise.catch(() => undefined)
-  expect(seen).toEqual([])
-
-  const boom = new Error('boom')
-  const { result } = testing.renderHook(() =>
-    useLoaded(
-      () => Promise.reject(boom),
-      [],
-      'fallback',
-      (e) => seen.push(e),
-    ),
-  )
-  await settle()
-  expect(result.current.error).toBe(boom)
-  expect(result.current.data).toBe('fallback')
-  expect(result.current.loading).toBe(false)
-  expect(seen).toEqual([boom])
-})
-
-test('new deps clear the old answer until the new one arrives', async () => {
-  const second = deferred<string>()
-  const { result, rerender } = testing.renderHook(
-    ({ key }) => useLoaded(() => (key === 'a' ? Promise.resolve('a') : second.promise), [key], ''),
-    { initialProps: { key: 'a' } },
-  )
-  await settle()
-  expect(result.current.data).toBe('a')
-  rerender({ key: 'b' })
-  await settle()
-  expect(result.current.data).toBe('')
-  second.resolve('b')
-  await settle()
-  expect(result.current.data).toBe('b')
-})
-
-test('a null loader never runs', () => {
-  const { result } = testing.renderHook(() => useLoaded<number>(null, [], 7))
-  expect(result.current).toMatchObject({ data: 7, loading: false })
-})
-
-test('a failed reload keeps the last good data', async () => {
-  let fail: boolean
-  fail = false
-  const { result } = testing.renderHook(() =>
-    useLoaded(
-      () => (fail ? Promise.reject(new Error('offline')) : Promise.resolve('good')),
-      [],
-      '',
-    ),
-  )
-  await settle()
-  expect(result.current.data).toBe('good')
-  fail = true
-  await testing.act(() => result.current.reload())
-  await settle()
-  expect(result.current.data).toBe('good')
-  expect(result.current.error).toBeInstanceOf(Error)
-})
-
-test('keepAcrossKeys holds the old answer through new deps, and a null load still resets', async () => {
-  const second = deferred<string>()
-  const { result, rerender } = testing.renderHook(
+  const { result, rerender, unmount } = testing.renderHook(
     ({ key }) =>
       useLoaded(
-        key === 'c' ? null : () => (key === 'a' ? Promise.resolve('a') : second.promise),
+        () => {
+          n += 1
+          if (mode === 'late') {
+            return late.promise
+          }
+          return mode === 'good' ? Promise.resolve(n) : Promise.reject(boom)
+        },
         [key],
-        '',
-        { keepAcrossKeys: true },
+        0,
+        (e) => seen.push(e),
       ),
     { initialProps: { key: 'a' } },
   )
-  await settle()
-  rerender({ key: 'b' })
-  await settle()
-  expect(result.current.data).toBe('a')
   expect(result.current.loading).toBe(true)
-  second.resolve('b')
   await settle()
-  expect(result.current.data).toBe('b')
-  rerender({ key: 'c' })
+  expect(result.current).toMatchObject({ data: 1, loading: false, error: null })
+
+  testing.act(() => result.current.setData(10))
+  expect(result.current.data).toBe(10)
+
+  mode = 'fail'
+  await testing.act(() => result.current.reload())
+  expect(result.current).toMatchObject({ data: 10, loading: false, error: boom })
+  expect(seen).toEqual([boom])
+
+  mode = 'good'
+  rerender({ key: 'b' })
+  expect(result.current).toMatchObject({ data: 0, loading: true, error: null })
   await settle()
-  expect(result.current.data).toBe('')
+  expect(result.current).toMatchObject({ data: 3, error: null })
+
+  mode = 'late'
+  testing.act(() => {
+    result.current.reload()
+  })
+  unmount()
+  late.reject(boom)
+  await late.promise.catch(() => undefined)
+  expect(seen).toEqual([boom])
 })

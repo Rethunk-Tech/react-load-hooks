@@ -41,3 +41,24 @@ test('the caller key reaches localStorage verbatim, with no prefix', () => {
   expect(localStorage.length).toBe(1)
   localStorage.removeItem('stored-test.verbatim')
 })
+
+test('storage that throws reads as the fallback and writes nothing', () => {
+  const real = Object.getOwnPropertyDescriptor(globalThis, 'localStorage')
+  const blocked = {
+    getItem: () => {
+      throw new Error('blocked')
+    },
+    setItem: () => {
+      throw new Error('full')
+    },
+  }
+  Object.defineProperty(globalThis, 'localStorage', { value: blocked, configurable: true })
+  try {
+    expect(readStored('stored-test.blocked', 'none', isText)).toBe('none')
+    expect(() => writeStored('stored-test.blocked', 'x')).not.toThrow()
+  } finally {
+    if (real) {
+      Object.defineProperty(globalThis, 'localStorage', real)
+    }
+  }
+})
