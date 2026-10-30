@@ -30,6 +30,8 @@
 
   // canon ts-biome-00024
   "javascript": {
+    // canon ts-bun-biome-00002
+    "globals": ["Bun"],
     "formatter": {
       "quoteStyle": "single",
       "semicolons": "asNeeded",
