@@ -31,6 +31,7 @@ would upload.
 | `src/index.ts` | The public surface |
 | `src/loader.ts` | React-free newest-load-wins logic |
 | `src/useLoaded.ts`, `src/useDebouncedLoad.ts` | The load hooks over `loader` |
+| `src/coalescer.ts` | Per-key one-running, one-queued task runner |
 | `src/useDebouncedValue.ts` | Settled value |
 | `src/useStoredState.ts` | `localStorage` state and its plain read and write |
 | `src/useWidth.ts` | Element width |

@@ -123,3 +123,28 @@ test('a failed reload keeps the last good data', async () => {
   expect(result.current.data).toBe('good')
   expect(result.current.error).toBeInstanceOf(Error)
 })
+
+test('keepAcrossKeys holds the old answer through new deps, and a null load still resets', async () => {
+  const second = deferred<string>()
+  const { result, rerender } = testing.renderHook(
+    ({ key }) =>
+      useLoaded(
+        key === 'c' ? null : () => (key === 'a' ? Promise.resolve('a') : second.promise),
+        [key],
+        '',
+        { keepAcrossKeys: true },
+      ),
+    { initialProps: { key: 'a' } },
+  )
+  await settle()
+  rerender({ key: 'b' })
+  await settle()
+  expect(result.current.data).toBe('a')
+  expect(result.current.loading).toBe(true)
+  second.resolve('b')
+  await settle()
+  expect(result.current.data).toBe('b')
+  rerender({ key: 'c' })
+  await settle()
+  expect(result.current.data).toBe('')
+})

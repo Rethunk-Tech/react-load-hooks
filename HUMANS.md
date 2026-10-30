@@ -36,9 +36,10 @@ function Repos({ owner }: { owner: string }) {
 
 | Entry point | Contract |
 | --- | --- |
-| `useLoaded(load, deps, initial, onError?)` | Runs `load` when `deps` change, never while `load` is `null`. Only the newest run lands. New deps and a `null` load reset `data` to `initial`; a failed load keeps the last good `data` and sets `error`. `reload` re-runs with the same deps and keeps the old value until the answer arrives; `setData` edits the loaded value. |
+| `useLoaded(load, deps, initial, onError | { onError?, keepAcrossKeys? }?)` | Runs `load` when `deps` change, never while `load` is `null`. Only the newest run lands. New deps and a `null` load reset `data` to `initial`; a failed load keeps the last good `data` and sets `error`. `reload` re-runs with the same deps and keeps the old value until the answer arrives; `setData` edits the loaded value. `keepAcrossKeys: true` keeps `data` through new deps until the new answer lands; a `null` load still resets. |
 | `useDebouncedLoad(load, deps, { initial, delayMs, onError? })` | `useLoaded` after `delayMs` of quiet, keeping the last answer meanwhile. `delayMs` is read each time a load is scheduled, so it may be state. `run(next)` loads at once. |
 | `loader(sink, options?)` | The same rules without React: `deps`, `run`, `stop`. `keepAcrossKeys` keeps the value across new deps; `defer` schedules each start. |
+| `coalescer()` | Returns `(key, run)`. One `run` per key at a time; asks made meanwhile share a single follow-up run that starts when the current one settles, so a result is never older than its ask. Resolves with that run's outcome. |
 | `useStoredState(key, fallback, valid)` | Reads `localStorage[key]` once per key; a value failing `valid`, or storage that throws, gives `fallback`. A bare non-JSON string written by other code reads back as that string. Writes `JSON.stringify(value)`. |
 | `readStored` / `writeStored` | The same read and write without a hook. The key is used verbatim: no prefix. |
 | `useWidth()` | `[ref, width]`; `0` until measured. Updates are flushed synchronously so a resize paints once. |
