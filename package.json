@@ -1,0 +1,47 @@
+{
+  "name": "@rethunk/react-load-hooks",
+  "version": "0.1.0",
+  "description": "React hooks for async loads that never land out of order, plus the small state hooks an app builds screens from.",
+  "license": "MIT",
+  "author": "Rethunk.Tech, LLC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rethunk-Tech/react-load-hooks.git"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "packageManager": "bun@1.4.3",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "lint": "biome check --error-on-warnings .",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "bun test",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "pack:check": "bun scripts/check-pack.ts"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.4",
+    "@happy-dom/global-registrator": "^21.0.4",
+    "@testing-library/dom": "^10.4.2",
+    "@testing-library/react": "^16.3.3",
+    "@types/bun": "^1.4.4",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "typescript": "^7.0.2"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}
