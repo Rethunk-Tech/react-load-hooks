@@ -1,7 +1,8 @@
 # AGENTS.md
 
-<!-- scaffold: two or three sentences: what `@rethunk/react-load-hooks` does, who imports it, and what it never
-imports (no consumer package). -->
+`@rethunk/react-load-hooks` is a set of React hooks for async loads and small screen state. It
+peers on `react` and `react-dom` and imports nothing else; it knows no application, framework or
+backend. The tests use happy-dom (`test/dom.ts`) and Testing Library, as devDependencies only.
 
 ## Gate
 
@@ -11,12 +12,26 @@ would upload.
 
 ## Shape
 
-- Sources keep `./x.ts` specifiers; `tsc -p tsconfig.build.json` rewrites them to `./x.js` on emit.
+- Relative imports keep their `.ts` extension; `tsc -p tsconfig.build.json` rewrites it to `.js` on emit.
 - `package.json` `files` is `dist` and `src`: the declaration maps point at `../src`.
 - The only entry point is `src/index.ts`; a name not exported there is not API.
-<!-- scaffold: the invariants a change must keep, each with its reason: what stays unexported and
-why, which function is the single path for what, which bound is policy and which is not. -->
+- `loader` owns the ordering rule (a generation counter); both load hooks are thin adapters, so a
+  change to "who may land" is made once, there, and covered by `loader.test.ts` without a DOM.
+- The `useNow` clocks hold their time outside React and expose it through `useSyncExternalStore`.
+  The snapshot is `compute(now)`, a primitive, which is what makes React skip a render when the
+  answer is unchanged. Do not return an object from `compute`.
+- Storage keys are the caller's, verbatim. A prefix here would orphan data an application already
+  wrote.
+- `react` and `react-dom` stay peers: a second copy of React breaks every hook.
 
 ## Files
 
-<!-- scaffold: a `| File | Holds |` table, one row per non-test source file. -->
+| File | Holds |
+| --- | --- |
+| `src/index.ts` | The public surface |
+| `src/loader.ts` | React-free newest-load-wins logic |
+| `src/useLoaded.ts`, `src/useDebouncedLoad.ts` | The load hooks over `loader` |
+| `src/useDebouncedValue.ts` | Settled value |
+| `src/useStoredState.ts` | `localStorage` state and its plain read and write |
+| `src/useWidth.ts` | Element width |
+| `src/useNow.ts` | Shared clocks |

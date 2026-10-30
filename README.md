@@ -12,8 +12,14 @@
 
 React hooks for async loads that never land out of order, plus the small state hooks an app builds screens from. Package `@rethunk/react-load-hooks`. First consumer: Mortar.
 
-<!-- scaffold: one short paragraph on what the package guarantees and why it exists, in plain
-words. -->
+Only the newest load lands: a slower, older answer or error never overwrites a newer one, and an
+unmounted component hears nothing. The name says "load" because that is the headline; the package
+also holds the small state hooks a screen is built from (persisted state, element width, a shared
+clock).
+
+```tsx
+const { data, loading, error, reload } = useLoaded(() => fetchRepos(owner), [owner], [])
+```
 
 ## Quick start
 
@@ -25,7 +31,11 @@ A worked example and the contracts: [HUMANS.md](HUMANS.md).
 
 ## Features
 
-<!-- scaffold: 3 to 6 bullets, each a capability a caller can rely on. No roadmap. -->
+- `useLoaded` and `useDebouncedLoad` fetch on dependency changes and drop superseded answers.
+- `loader` is the same logic without React, for a store or a class.
+- `useStoredState` persists UI state in `localStorage` under the exact key you give it.
+- `useWidth` tracks an element's width before paint; `useDebouncedValue` settles a fast-changing value.
+- `useNowValue` and `useSecondValue` share one timer per period and re-render only on a changed answer.
 
 ## Documentation
 

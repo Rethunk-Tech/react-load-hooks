@@ -6,4 +6,10 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `useLoaded`, `useDebouncedLoad` and the React-free `loader`: loads where only the newest answer lands.
+- `useStoredState`, `readStored`, `writeStored`: `localStorage` state under the caller's exact key.
+- `useWidth`, `useDebouncedValue`, `useNowValue`, `useSecondValue`.
+
 [Unreleased]: https://github.com/Rethunk-Tech/react-load-hooks/commits/main
