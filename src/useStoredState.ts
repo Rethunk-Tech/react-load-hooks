@@ -13,7 +13,7 @@ function read<T>(key: string, fallback: T, valid: (value: unknown) => value is T
   }
 }
 
-// Keys written before they went through this module hold a bare string, which is not JSON.
+// Other code may have written a bare string, which is not JSON.
 function parseOrRaw(raw: string): unknown {
   try {
     return JSON.parse(raw)
@@ -30,7 +30,7 @@ function write(key: string, value: unknown) {
   }
 }
 
-// State that survives a restart in localStorage. A stored value that fails `valid` is ignored.
+/** State that survives a restart in localStorage. A stored value that fails `valid` is ignored. */
 export function useStoredState<T>(
   key: string,
   fallback: T,

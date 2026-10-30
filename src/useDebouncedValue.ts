@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-/** value once it has held still for `ms`; the first render returns it at once. */
+/** `value` once it has held still for `ms`; the first render returns it at once. */
 export function useDebouncedValue<T>(value: T, ms: number): T {
   const [settled, setSettled] = useState(value)
   useEffect(() => {

@@ -7,7 +7,7 @@ export interface LoadSink<T> {
   value: (value: T) => void
   error: (error: unknown) => void
   loading: (on: boolean) => void
-  // reset shows the hook's initial value again.
+  /** Shows the hook's initial value again. */
   reset: () => void
 }
 
@@ -16,9 +16,11 @@ const now = (go: () => void) => {
   return () => undefined
 }
 
-// loader is useLoaded's and useDebouncedLoad's logic without React. Only the newest load lands: a later load, new deps
-// or stop drops the answer, error and end of every one before it. New deps reset the value unless keepAcrossKeys, and a
-// null load always does. `defer` starts a load, now or later, and returns what cancels the start.
+/**
+ * useLoaded's and useDebouncedLoad's logic without React. Only the newest load lands: a later load, new deps or stop
+ * drops the answer, error and end of every one before it. New deps reset the value unless keepAcrossKeys, and a null
+ * load always does. `defer` starts a load, now or later, and returns what cancels the start.
+ */
 export function loader<T>(
   sink: LoadSink<T>,
   {
@@ -83,7 +85,7 @@ export function loader<T>(
         start(load).catch(sink.error)
       })
     },
-    // Runs a load at once with the same deps, keeping the value shown until it answers; resolves when it has.
+    /** Runs a load at once with the same deps, keeping the value shown until it answers; resolves when it has. */
     run(load: (() => Promise<T>) | null): Promise<void> {
       if (load === null) {
         skip()

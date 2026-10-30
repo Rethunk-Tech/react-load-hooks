@@ -1,10 +1,12 @@
 import { type DependencyList, useCallback, useEffect, useRef, useState } from 'react'
 import { loader } from './loader.ts'
 
-// Runs `load` whenever `deps` change (never while `load` is null) and drops the answer of any run that has been
-// superseded or unmounted. New deps and a skipped load reset `data` to `initial`; a failed load keeps the last good
-// `data` and sets `error`. `reload` runs it again with the same deps and keeps the old value until the answer
-// arrives; `setData` edits the loaded value in place.
+/**
+ * Runs `load` whenever `deps` change (never while `load` is null) and drops the answer of any run that has been
+ * superseded or unmounted. New deps and a null load reset `data` to `initial`; a failed load keeps the last good `data`
+ * and sets `error`. `reload` runs it again with the same deps and keeps the old value until the answer arrives;
+ * `setData` edits the loaded value in place.
+ */
 export function useLoaded<T>(
   load: (() => Promise<T>) | null,
   deps: DependencyList,
