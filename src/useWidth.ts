@@ -11,8 +11,8 @@ function useWidth<T extends HTMLElement>(): [RefObject<T | null>, number] {
     if (!el) {
       return
     }
-    // Rendered before the browser paints the resize: a default-priority update would paint a frame laid out for the
-    // old width, so an opening details panel flashed the list's full column set and a sideways scrollbar.
+    // Rendered before the browser paints the resize: a default-priority update would paint one frame laid out for the
+    // old width, with whatever columns or scrollbar that width implies.
     const ro = new ResizeObserver(() => flushSync(() => setWidth(el.clientWidth)))
     ro.observe(el)
     setWidth(el.clientWidth)

@@ -1,10 +1,11 @@
 import { type DependencyList, useEffect, useRef, useState } from 'react'
 import { loader } from './loader.ts'
 
-// useLoaded for input that changes on every key: `load` runs `delayMs` (read afresh each time a load is scheduled) after `deps` last changed, and `data` keeps the
-// last answer meanwhile instead of going back to `initial`. Only the newest run lands: the answer or error of one that
-// new deps, a later `run` or unmounting superseded is dropped, and `onError` hears only the newest failure. A null
-// `load` resets `data` to `initial`. `run` starts another load at once, such as the next page, under the same rule.
+// useLoaded for input that changes on every key: `load` runs `delayMs` (read afresh each time a load is scheduled)
+// after `deps` last changed, and `data` keeps the last answer meanwhile instead of going back to `initial`. Only the
+// newest run lands: the answer or error of one that new deps, a later `run` or unmounting superseded is dropped, and
+// `onError` hears only the newest failure. A null `load` resets `data` to `initial`. `run` starts another load at
+// once, such as the next page, under the same rule.
 export function useDebouncedLoad<T>(
   load: (() => Promise<T>) | null,
   deps: DependencyList,
