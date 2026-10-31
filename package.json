@@ -1,6 +1,6 @@
 {
   "name": "@rethunk/react-load-hooks",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "React hooks for async loads that never land out of order, plus the small state hooks an app builds screens from.",
   "license": "MIT",
   "author": "Rethunk.Tech, LLC",

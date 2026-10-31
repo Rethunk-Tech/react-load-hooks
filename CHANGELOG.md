@@ -6,6 +6,13 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-30
+
+### Added
+
+- `sameValue`, `keepUnchanged` and `keepFields`: keep the stored value when a fresh backend answer is equal.
+- `clockWhen`, `absoluteWhen` and `relativeWhen` (with `WhenOptions`): `Intl` time labels.
+
 ## [0.1.1] - 2026-10-30
 
 ### Added
@@ -21,6 +28,7 @@ Notable changes to `react-load-hooks`. The format follows
 - `useStoredState`, `readStored`, `writeStored`: `localStorage` state under the caller's exact key.
 - `useWidth`, `useDebouncedValue`, `useNowValue`, `useSecondValue`.
 
+[0.2.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Rethunk-Tech/react-load-hooks/releases/tag/v0.1.0
 [Unreleased]: https://github.com/Rethunk-Tech/react-load-hooks/commits/main
