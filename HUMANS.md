@@ -43,6 +43,12 @@ function Repos({ owner }: { owner: string }) {
 | `useStoredState(key, fallback, valid)` | Reads `localStorage[key]` once per key; a value failing `valid`, or storage that throws, gives `fallback`. A bare non-JSON string written by other code reads back as that string. Writes `JSON.stringify(value)`. |
 | `readStored` / `writeStored` | The same read and write without a hook. The key is used verbatim: no prefix. |
 | `useWidth()` | `[ref, width]`; `0` until measured. Updates are flushed synchronously so a resize paints once. |
+| `sameValue(a, b)` | `a === b` or equal `JSON.stringify` text: for plain data a backend sends. |
+| `keepUnchanged(prev, next, keyOf)` | `next` with each item equal to the previous item of the same key replaced by that object; `prev` itself when the result is the same list. |
+| `keepFields(prev, next)` | `next` with each field equal to `prev`'s kept as `prev`'s value, so a selector of an unchanged field returns the same object. |
+| `clockWhen(value, locale?)` | The time of day as the locale writes it; `''` for a zero (before 1970) or unparseable time. `value` is a string, number or `Date`. |
+| `absoluteWhen(value, locale?)` | Medium date and short time; `''` as above. |
+| `relativeWhen(value, { withTime?, now?, locale?, fewSeconds?, absolute? }?)` | Within a minute either side of `now` it returns `fewSeconds` (English by default; pass the translated text); up to a week back, `Intl.RelativeTimeFormat` with `numeric: 'auto'`; otherwise (and for any time more than a minute ahead) a medium date, with the time when `withTime`. `absolute` always gives the date form. `''` for a zero or unparseable time. |
 | `useDebouncedValue(value, ms)` | Returns `value` once it has held still for `ms`; the first render returns it at once. |
 | `useNowValue(compute)` / `useSecondValue(compute, on)` | `compute(now)` must return a primitive; the component re-renders only when it changes. The timer runs only while a component watches it, and `useSecondValue`'s only while `on`. |
 
