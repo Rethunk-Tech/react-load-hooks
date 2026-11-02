@@ -1,5 +1,5 @@
 import { type DependencyList, useEffect, useRef, useState } from 'react'
-import { loader } from './loader.ts'
+import { type Load, loader } from './loader.ts'
 
 /**
  * useLoaded for input that changes on every key: `load` runs `delayMs` (read afresh each time a load is scheduled)
@@ -8,7 +8,7 @@ import { loader } from './loader.ts'
  * next page, under the same rule.
  */
 export function useDebouncedLoad<T>(
-  load: (() => Promise<T>) | null,
+  load: Load<T> | null,
   deps: DependencyList,
   {
     initial,
@@ -54,6 +54,6 @@ export function useDebouncedLoad<T>(
     data,
     loading,
     error,
-    run: (next: () => Promise<T>) => runs.run(next),
+    run: (next: Load<T>) => runs.run(next),
   }
 }

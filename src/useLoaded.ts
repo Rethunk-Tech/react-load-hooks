@@ -1,5 +1,5 @@
 import { type DependencyList, useCallback, useEffect, useRef, useState } from 'react'
-import { loader } from './loader.ts'
+import { type Load, loader } from './loader.ts'
 
 export interface LoadedOptions {
   onError?: (error: unknown) => void
@@ -15,7 +15,7 @@ export interface LoadedOptions {
  * (a null load still resets it).
  */
 export function useLoaded<T>(
-  load: (() => Promise<T>) | null,
+  load: Load<T> | null,
   deps: DependencyList,
   initial: T,
   options?: ((error: unknown) => void) | LoadedOptions,

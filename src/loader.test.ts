@@ -76,3 +76,24 @@ test('only the newest load lands', async () => {
     expect(log).toEqual(['reset', 'idle', 'loading'])
   }
 })
+
+test('a superseded or stopped load has its signal aborted', async () => {
+  const signals: AbortSignal[] = []
+  const runs = loader<string>({
+    value: () => undefined,
+    error: () => undefined,
+    loading: () => undefined,
+    reset: () => undefined,
+  })
+  const load = async (signal: AbortSignal) => {
+    signals.push(signal)
+    return 'x'
+  }
+  await runs.run(load)
+  expect(signals[0]?.aborted).toBe(false)
+  await runs.run(load)
+  expect(signals[0]?.aborted).toBe(true)
+  expect(signals[1]?.aborted).toBe(false)
+  runs.stop()
+  expect(signals[1]?.aborted).toBe(true)
+})

@@ -1,5 +1,5 @@
 export { coalescer } from './coalescer.ts'
-export { type LoadSink, loader } from './loader.ts'
+export { type Load, type LoadSink, loader } from './loader.ts'
 export { keepFields, keepUnchanged, sameValue } from './sameValue.ts'
 export { useDebouncedLoad } from './useDebouncedLoad.ts'
 export { useDebouncedValue } from './useDebouncedValue.ts'

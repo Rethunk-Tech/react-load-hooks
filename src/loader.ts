@@ -11,6 +11,9 @@ export interface LoadSink<T> {
   reset: () => void
 }
 
+/** `signal` aborts when a later load, new deps or stop supersedes this one: pass it to fetch to stop the abandoned work. */
+export type Load<T> = (signal: AbortSignal) => Promise<T>
+
 const now = (go: () => void) => {
   go()
   return () => undefined
@@ -31,16 +34,22 @@ export function loader<T>(
   let generation = 0
   let seen: DependencyList | null = null
   let cancel: () => void = () => undefined
+  let controller: AbortController | null = null
   const drop = () => {
     generation += 1
     cancel()
+    controller?.abort()
+    controller = null
   }
-  const start = (load: () => Promise<T>): Promise<void> => {
+  const start = (load: Load<T>): Promise<void> => {
     generation += 1
+    controller?.abort()
     const mine = generation
     const current = () => generation === mine
+    const mineController = new AbortController()
+    controller = mineController
     sink.loading(true)
-    return load()
+    return load(mineController.signal)
       .then(
         (value) => {
           if (current()) {
@@ -65,7 +74,7 @@ export function loader<T>(
     sink.loading(false)
   }
   return {
-    deps(deps: DependencyList, load: (() => Promise<T>) | null) {
+    deps(deps: DependencyList, load: Load<T> | null) {
       if (sameDeps(seen, deps)) {
         return
       }
@@ -86,7 +95,7 @@ export function loader<T>(
       })
     },
     /** Runs a load at once with the same deps, keeping the value shown until it answers; resolves when it has. */
-    run(load: (() => Promise<T>) | null): Promise<void> {
+    run(load: Load<T> | null): Promise<void> {
       if (load === null) {
         skip()
         return Promise.resolve()
