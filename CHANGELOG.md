@@ -6,6 +6,8 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-02
+
 ### Added
 
 - `useLoaded`, `useDebouncedLoad` and `loader` pass the load an `AbortSignal`, aborted when a later load, new deps or unmount supersedes it, so a `fetch` given the signal stops too. Existing loads without the parameter work unchanged. Exports the `Load` type.
