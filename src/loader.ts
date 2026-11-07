@@ -49,7 +49,8 @@ export function loader<T>(
     const mineController = new AbortController()
     controller = mineController
     sink.loading(true)
-    return load(mineController.signal)
+    // A load that throws before returning a promise settles through the sink like a rejection.
+    return new Promise<T>((resolve) => resolve(load(mineController.signal)))
       .then(
         (value) => {
           if (current()) {

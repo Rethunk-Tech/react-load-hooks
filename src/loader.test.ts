@@ -97,3 +97,13 @@ test('a superseded or stopped load has its signal aborted', async () => {
   runs.stop()
   expect(signals[1]?.aborted).toBe(true)
 })
+
+test('a load that throws synchronously reports the error and stops loading', async () => {
+  const { log, pending, runs } = harness(false)
+  runs.deps(['a'], () => {
+    throw new Error('sync')
+  })
+  pending[0]?.()
+  await flush()
+  expect(log).toEqual(['loading', 'loading', 'error Error: sync', 'idle'])
+})
