@@ -6,6 +6,12 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-07
+
+### Fixed
+
+- A load that throws synchronously settles through the sink instead of escaping the caller.
+
 ## [0.3.0] - 2026-11-02
 
 ### Added
@@ -38,3 +44,4 @@ Notable changes to `react-load-hooks`. The format follows
 [0.1.1]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Rethunk-Tech/react-load-hooks/releases/tag/v0.1.0
 [Unreleased]: https://github.com/Rethunk-Tech/react-load-hooks/commits/main
+[0.3.1]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.3.0...v0.3.1
