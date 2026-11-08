@@ -34,7 +34,7 @@ would upload.
 | `src/coalescer.ts`                            | Per-key one-running, one-queued task runner                                                                                       |
 | `src/useDebouncedValue.ts`                    | Settled value                                                                                                                     |
 | `src/useStoredState.ts`                       | `localStorage` state and its plain read and write                                                                                 |
-| `src/useWidth.ts`                             | Element width                                                                                                                     |
+| `src/useSize.ts`, `src/useWidth.ts`           | Element size and width                                                                                                            |
 | `src/sameValue.ts`                            | `sameValue`, `keepUnchanged`, `keepFields`: keep the stored value when a fresh answer is equal                                    |
 | `src/when.ts`                                 | `clockWhen`, `absoluteWhen`, `relativeWhen`: Intl time labels; the caller passes the locale and the translated "few seconds" text |
 | `src/useNow.ts`                               | Shared clocks                                                                                                                     |

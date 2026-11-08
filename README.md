@@ -32,7 +32,7 @@ A worked example and the contracts: [HUMANS.md](HUMANS.md).
 - `useLoaded` and `useDebouncedLoad` fetch on dependency changes and drop superseded answers.
 - `loader` is the same logic without React, for a store or a class.
 - `useStoredState` persists UI state in `localStorage`.
-- `useWidth` tracks an element's width before paint; `useDebouncedValue` settles a fast-changing value.
+- `useSize` tracks an element's width and height before paint; `useWidth` is the width only. `useDebouncedValue` settles a fast-changing value.
 - `sameValue`, `keepUnchanged` and `keepFields` keep the stored value when a fresh backend answer is equal, so subscribers do not re-render.
 - `clockWhen`, `absoluteWhen` and `relativeWhen` label a time through `Intl`: "3 minutes ago" within a week, a date after.
 - `useNowValue` and `useSecondValue` share one timer per period and re-render only on a changed answer.

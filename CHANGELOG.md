@@ -6,6 +6,10 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `useSize`: an element's client width and height, kept current before paint. `useWidth` is the same measurement for width only.
+
 ## [0.3.1] - 2026-11-07
 
 ### Fixed
