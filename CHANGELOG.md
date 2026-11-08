@@ -6,6 +6,10 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `useOnWindowFocus`, `useRestoreFocus` and `usePopoverAnchor`: run a callback on window focus, return focus when a surface closes, and hold the element a popover hangs from.
+
 ## [0.4.0] - 2026-11-08
 
 ### Added

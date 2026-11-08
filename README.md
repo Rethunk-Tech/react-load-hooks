@@ -36,6 +36,7 @@ A worked example and the contracts: [HUMANS.md](HUMANS.md).
 - `sameValue`, `keepUnchanged` and `keepFields` keep the stored value when a fresh backend answer is equal, so subscribers do not re-render.
 - `clockWhen`, `absoluteWhen` and `relativeWhen` label a time through `Intl`: "3 minutes ago" within a week, a date after.
 - `useNowValue` and `useSecondValue` share one timer per period and re-render only on a changed answer.
+- `useOnWindowFocus` runs a callback when the window regains focus. `useRestoreFocus` returns focus to a target when a surface closes. `usePopoverAnchor` holds the element a popover hangs from.
 
 ## Documentation
 
