@@ -8,20 +8,24 @@ afterAll(() => {
   testing.cleanup()
 })
 
+let seen: HTMLElement | null = null
+
+function Host() {
+  const { anchor, show, hide } = usePopoverAnchor()
+  seen = anchor
+  return createElement(
+    'div',
+    null,
+    createElement('button', { type: 'button', onClick: show }, 'open'),
+    createElement('button', { type: 'button', onClick: hide }, 'hide'),
+  )
+}
+
 test('show hangs the popover on the click target, hide clears it', () => {
-  let seen: HTMLElement | null | undefined
-  function Host() {
-    const { anchor, show, hide } = usePopoverAnchor()
-    seen = anchor
-    return createElement(
-      'div',
-      null,
-      createElement('button', { type: 'button', onClick: show }, 'open'),
-      createElement('button', { type: 'button', onClick: hide }, 'hide'),
-    )
-  }
+  seen = null
   const view = testing.render(createElement(Host))
-  const [open, close] = view.container.querySelectorAll('button')
+  const open = view.getByRole('button', { name: 'open' })
+  const close = view.getByRole('button', { name: 'hide' })
   expect(seen).toBe(null)
 
   testing.act(() => {
