@@ -6,6 +6,8 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-08
+
 ### Added
 
 - `useOnWindowFocus`, `useRestoreFocus` and `usePopoverAnchor`: run a callback on window focus, return focus when a surface closes, and hold the element a popover hangs from.
@@ -53,6 +55,7 @@ Notable changes to `react-load-hooks`. The format follows
 [0.2.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Rethunk-Tech/react-load-hooks/releases/tag/v0.1.0
-[Unreleased]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/Rethunk-Tech//usr/local/src/com.github/Rethunk-Tech/react-load-hooks/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/Rethunk-Tech//usr/local/src/com.github/Rethunk-Tech/react-load-hooks/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.3.1...v0.4.0
 [0.3.1]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.3.0...v0.3.1
