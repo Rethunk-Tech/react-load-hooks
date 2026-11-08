@@ -12,9 +12,9 @@ function Host() {
   const { anchor, show, hide } = usePopoverAnchor()
   return createElement(
     'div',
-    { 'data-anchor': anchor ? anchor.id : '' },
-    createElement('button', { type: 'button', id: 'open', onClick: show }, 'open'),
-    createElement('button', { type: 'button', id: 'hide', onClick: hide }, 'hide'),
+    { 'data-anchor': anchor?.getAttribute('data-name') ?? '' },
+    createElement('button', { type: 'button', 'data-name': 'open', onClick: show }, 'open'),
+    createElement('button', { type: 'button', 'data-name': 'hide', onClick: hide }, 'hide'),
   )
 }
 
