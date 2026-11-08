@@ -1,5 +1,5 @@
 import { afterAll, expect, test } from 'bun:test'
-import type { MouseEvent } from 'react'
+import { createElement } from 'react'
 
 const testing = await import('@testing-library/react')
 const { usePopoverAnchor } = await import('./usePopoverAnchor.ts')
@@ -9,17 +9,28 @@ afterAll(() => {
 })
 
 test('show hangs the popover on the click target, hide clears it', () => {
-  const view = testing.renderHook(() => usePopoverAnchor())
-  expect(view.result.current.anchor).toBe(null)
+  let seen: HTMLElement | null | undefined
+  function Host() {
+    const { anchor, show, hide } = usePopoverAnchor()
+    seen = anchor
+    return createElement(
+      'div',
+      null,
+      createElement('button', { type: 'button', onClick: show }, 'open'),
+      createElement('button', { type: 'button', onClick: hide }, 'hide'),
+    )
+  }
+  const view = testing.render(createElement(Host))
+  const [open, close] = view.container.querySelectorAll('button')
+  expect(seen).toBe(null)
 
-  const el = document.createElement('button')
   testing.act(() => {
-    view.result.current.show({ currentTarget: el } as MouseEvent<HTMLElement>)
+    open.click()
   })
-  expect(view.result.current.anchor).toBe(el)
+  expect(seen).toBe(open)
 
   testing.act(() => {
-    view.result.current.hide()
+    close.click()
   })
-  expect(view.result.current.anchor).toBe(null)
+  expect(seen).toBe(null)
 })
