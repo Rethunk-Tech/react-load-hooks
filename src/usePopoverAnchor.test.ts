@@ -8,33 +8,27 @@ afterAll(() => {
   testing.cleanup()
 })
 
-let seen: HTMLElement | null = null
-
 function Host() {
   const { anchor, show, hide } = usePopoverAnchor()
-  seen = anchor
   return createElement(
     'div',
-    null,
-    createElement('button', { type: 'button', onClick: show }, 'open'),
-    createElement('button', { type: 'button', onClick: hide }, 'hide'),
+    { 'data-anchor': anchor ? anchor.id : '' },
+    createElement('button', { type: 'button', id: 'open', onClick: show }, 'open'),
+    createElement('button', { type: 'button', id: 'hide', onClick: hide }, 'hide'),
   )
 }
 
 test('show hangs the popover on the click target, hide clears it', () => {
-  seen = null
   const view = testing.render(createElement(Host))
-  const open = view.getByRole('button', { name: 'open' })
-  const close = view.getByRole('button', { name: 'hide' })
-  expect(seen).toBe(null)
+  expect(view.container.firstElementChild?.getAttribute('data-anchor')).toBe('')
 
   testing.act(() => {
-    open.click()
+    view.getByRole('button', { name: 'open' }).click()
   })
-  expect(seen).toBe(open)
+  expect(view.container.firstElementChild?.getAttribute('data-anchor')).toBe('open')
 
   testing.act(() => {
-    close.click()
+    view.getByRole('button', { name: 'hide' }).click()
   })
-  expect(seen).toBe(null)
+  expect(view.container.firstElementChild?.getAttribute('data-anchor')).toBe('')
 })
