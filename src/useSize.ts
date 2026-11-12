@@ -24,7 +24,7 @@ function useSize<T extends HTMLElement>(
     ro.observe(el)
     apply()
     return () => ro.disconnect()
-  }, [ref])
+  })
   return size
 }
 

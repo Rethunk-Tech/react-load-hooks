@@ -1,13 +1,12 @@
-import { type RefObject, useLayoutEffect, useRef, useState } from 'react'
+import { type RefCallback, useLayoutEffect, useState } from 'react'
 import { flushSync } from 'react-dom'
 
 /** The client width of the element the ref is put on, kept current as it resizes; 0 until measured. */
-function useWidth<T extends HTMLElement>(): [RefObject<T | null>, number] {
-  const ref = useRef<T | null>(null)
+function useWidth<T extends HTMLElement>(): [RefCallback<T>, number] {
+  const [el, setEl] = useState<T | null>(null)
   const [width, setWidth] = useState(0)
   // Measured before paint, so the first frame is laid out for the real width rather than 0.
   useLayoutEffect(() => {
-    const el = ref.current
     if (!el) {
       return
     }
@@ -17,8 +16,8 @@ function useWidth<T extends HTMLElement>(): [RefObject<T | null>, number] {
     ro.observe(el)
     setWidth(el.clientWidth)
     return () => ro.disconnect()
-  }, [])
-  return [ref, width]
+  }, [el])
+  return [setEl, width]
 }
 
 export { useWidth }

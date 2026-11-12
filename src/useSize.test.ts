@@ -1,5 +1,5 @@
 import { afterAll, expect, test } from 'bun:test'
-import { createElement } from 'react'
+import { createElement, useRef, useState } from 'react'
 
 const testing = await import('@testing-library/react')
 const { useSize } = await import('./useSize.ts')
@@ -61,7 +61,7 @@ function WidthHost() {
       if (node) {
         setClientSize(node, 64, 20)
       }
-      ref.current = node
+      ref(node)
     },
     'data-width': String(width),
   })
@@ -114,8 +114,70 @@ test('a new ref is measured and unmount disconnects the observer', () => {
   ro?.fire()
 })
 
+function DelayedSize() {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const size = useSize(ref)
+  const [show, setShow] = useState(false)
+  return createElement(
+    'div',
+    { 'data-width': String(size.width), 'data-height': String(size.height) },
+    createElement('button', { type: 'button', onClick: () => setShow(true) }, 'show'),
+    show
+      ? createElement('div', {
+          ref: (node: HTMLDivElement | null) => {
+            if (node) {
+              setClientSize(node, 90, 30)
+            }
+            ref.current = node
+          },
+        })
+      : null,
+  )
+}
+
+function DelayedWidth() {
+  const [ref, width] = useWidth<HTMLDivElement>()
+  const [show, setShow] = useState(false)
+  return createElement(
+    'div',
+    null,
+    createElement('button', { type: 'button', onClick: () => setShow(true) }, 'show'),
+    show
+      ? createElement('span', {
+          ref: (node: HTMLDivElement | null) => {
+            if (node) {
+              setClientSize(node, 80, 24)
+            }
+            ref(node)
+          },
+          'data-width': String(width),
+        })
+      : null,
+  )
+}
+
 test('useWidth still returns the measured client width', () => {
   observers.length = 0
   const view = testing.render(createElement(WidthHost))
   expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('64')
+})
+
+test('useSize measures an element that mounts after the first layout', () => {
+  observers.length = 0
+  const view = testing.render(createElement(DelayedSize))
+  expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('0')
+  testing.act(() => {
+    view.getByRole('button').click()
+  })
+  expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('90')
+  expect(view.container.firstElementChild?.getAttribute('data-height')).toBe('30')
+})
+
+test('useWidth measures an element that mounts after the first layout', () => {
+  observers.length = 0
+  const view = testing.render(createElement(DelayedWidth))
+  testing.act(() => {
+    view.getByRole('button').click()
+  })
+  expect(view.container.querySelector('[data-width]')?.getAttribute('data-width')).toBe('80')
 })
