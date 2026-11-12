@@ -13,6 +13,17 @@ function parseWhen(value: string | number | Date): Date | undefined {
   return d
 }
 
+function intlText(run: () => string): string {
+  try {
+    return run()
+  } catch (e) {
+    if (e instanceof RangeError) {
+      return ''
+    }
+    throw e
+  }
+}
+
 export interface WhenOptions {
   withTime?: boolean
   now?: number
@@ -25,7 +36,7 @@ export interface WhenOptions {
 // clockWhen is the time of day as the locale writes it ("9:05 AM", "09:05"), '' for a zero or unparseable time.
 export function clockWhen(value: string | number | Date, locale = 'en'): string {
   const d = parseWhen(value)
-  return d ? new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(d) : ''
+  return d ? intlText(() => new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(d)) : ''
 }
 
 export function absoluteWhen(value: string | number | Date, locale = 'en'): string {
@@ -33,10 +44,12 @@ export function absoluteWhen(value: string | number | Date, locale = 'en'): stri
   if (!d) {
     return ''
   }
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: 'medium',
-    timeStyle: 'short',
-  }).format(d)
+  return intlText(() =>
+    new Intl.DateTimeFormat(locale, {
+      dateStyle: 'medium',
+      timeStyle: 'short',
+    }).format(d),
+  )
 }
 
 // relativeWhen reads a moment as "3 minutes ago" or "yesterday" within the last week and as a date before that,
@@ -56,31 +69,37 @@ export function relativeWhen(
     return ''
   }
   if (absolute) {
-    return new Intl.DateTimeFormat(locale, {
-      dateStyle: 'medium',
-      ...(withTime ? { timeStyle: 'short' as const } : {}),
-    }).format(d)
+    return intlText(() =>
+      new Intl.DateTimeFormat(locale, {
+        dateStyle: 'medium',
+        ...(withTime ? { timeStyle: 'short' as const } : {}),
+      }).format(d),
+    )
   }
   const elapsed = now - d.getTime()
   if (elapsed > -MINUTE && elapsed < MINUTE) {
     return fewSeconds
   }
   if (elapsed >= MINUTE && elapsed < WEEK) {
-    const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' })
-    if (elapsed < HOUR) {
-      return rtf.format(-Math.floor(elapsed / MINUTE), 'minute')
-    }
-    if (elapsed < DAY) {
-      return rtf.format(-Math.floor(elapsed / HOUR), 'hour')
-    }
-    const today = new Date(now)
-    today.setHours(0, 0, 0, 0)
-    const then = new Date(d)
-    then.setHours(0, 0, 0, 0)
-    return rtf.format(-Math.round((today.getTime() - then.getTime()) / DAY), 'day')
+    return intlText(() => {
+      const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' })
+      if (elapsed < HOUR) {
+        return rtf.format(-Math.floor(elapsed / MINUTE), 'minute')
+      }
+      if (elapsed < DAY) {
+        return rtf.format(-Math.floor(elapsed / HOUR), 'hour')
+      }
+      const today = new Date(now)
+      today.setHours(0, 0, 0, 0)
+      const then = new Date(d)
+      then.setHours(0, 0, 0, 0)
+      return rtf.format(-Math.round((today.getTime() - then.getTime()) / DAY), 'day')
+    })
   }
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: 'medium',
-    ...(withTime ? { timeStyle: 'short' as const } : {}),
-  }).format(d)
+  return intlText(() =>
+    new Intl.DateTimeFormat(locale, {
+      dateStyle: 'medium',
+      ...(withTime ? { timeStyle: 'short' as const } : {}),
+    }).format(d),
+  )
 }

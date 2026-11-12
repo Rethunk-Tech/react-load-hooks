@@ -35,6 +35,12 @@ test('absoluteWhen uses a medium date and short time and skips a zero date', () 
   )
 })
 
+test('an invalid locale tag returns an empty string', () => {
+  expect(clockWhen(new Date(), 'en_US')).toBe('')
+  expect(absoluteWhen('2026-03-15T02:54:41Z', 'en_US')).toBe('')
+  expect(relativeWhen(at(3 * 60_000), { ...opts, locale: 'en_US' })).toBe('')
+})
+
 test('clockWhen writes the hour as the locale does', () => {
   expect(clockWhen(new Date(2026, 9, 2, 9, 5), 'en-US')).toMatch(/^9:05\sAM$/)
   expect(clockWhen('0001-01-01T00:00:00Z')).toBe('')
