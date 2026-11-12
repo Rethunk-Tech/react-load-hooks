@@ -31,11 +31,16 @@ test('readStored never throws and matches parse-then-valid', () => {
 
 test('writeStored then readStored round-trips JSON values', () => {
   fc.assert(
-    fc.property(fc.string(), fc.jsonValue(), (key, value) => {
-      writeStored(key, value)
-      const roundTripped = JSON.parse(JSON.stringify(value)) as unknown
-      expect(readStored(key, null, (_v): _v is unknown => true)).toEqual(roundTripped)
-    }),
+    // The test runtime's localStorage stand-in stores keys as object properties, so '__proto__' cannot round-trip there.
+    fc.property(
+      fc.string().filter((k) => k !== '__proto__'),
+      fc.jsonValue(),
+      (key, value) => {
+        writeStored(key, value)
+        const roundTripped = JSON.parse(JSON.stringify(value)) as unknown
+        expect(readStored(key, null, (_v): _v is unknown => true)).toEqual(roundTripped)
+      },
+    ),
   )
 })
 
