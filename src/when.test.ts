@@ -17,6 +17,10 @@ test('relativeWhen is relative within a week and a date before that', () => {
   expect(relativeWhen('nonsense', opts)).toBe('')
 })
 
+test('relativeWhen counts calendar days, not elapsed 24-hour blocks', () => {
+  expect(relativeWhen('2026-09-30T13:00:00Z', opts)).toBe('2 days ago')
+})
+
 test('a time more than a minute ahead reads as a date, not just now', () => {
   expect(relativeWhen(at(-3 * 60_000), opts)).toBe('Oct 2, 2026')
 })

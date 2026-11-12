@@ -73,7 +73,11 @@ export function relativeWhen(
     if (elapsed < DAY) {
       return rtf.format(-Math.floor(elapsed / HOUR), 'hour')
     }
-    return rtf.format(-Math.floor(elapsed / DAY), 'day')
+    const today = new Date(now)
+    today.setHours(0, 0, 0, 0)
+    const then = new Date(d)
+    then.setHours(0, 0, 0, 0)
+    return rtf.format(-Math.round((today.getTime() - then.getTime()) / DAY), 'day')
   }
   return new Intl.DateTimeFormat(locale, {
     dateStyle: 'medium',
