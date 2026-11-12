@@ -49,15 +49,16 @@ test('a watcher re-renders only when its answer changes, and the clock stops wit
   expect(jest.getTimerCount()).toBe(0)
 })
 
+function NowLabel() {
+  return createElement(
+    'span',
+    null,
+    useNowValue((now) => String(now)),
+  )
+}
+
 test('useNowValue can render to a string on the server', () => {
-  function Label() {
-    return createElement(
-      'span',
-      null,
-      useNowValue((now) => String(now)),
-    )
-  }
-  expect(() => renderToString(createElement(Label))).not.toThrow()
+  expect(() => renderToString(createElement(NowLabel))).not.toThrow()
 })
 
 test('the minute clock ticks once for every watcher and is idle when none is left', () => {

@@ -167,17 +167,19 @@ test('useSize measures an element that mounts after the first layout', () => {
   const view = testing.render(createElement(DelayedSize))
   expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('0')
   testing.act(() => {
-    view.getByRole('button').click()
+    view.container.querySelector('button')?.click()
   })
   expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('90')
   expect(view.container.firstElementChild?.getAttribute('data-height')).toBe('30')
+  view.unmount()
 })
 
 test('useWidth measures an element that mounts after the first layout', () => {
   observers.length = 0
   const view = testing.render(createElement(DelayedWidth))
   testing.act(() => {
-    view.getByRole('button').click()
+    view.container.querySelector('button')?.click()
   })
   expect(view.container.querySelector('[data-width]')?.getAttribute('data-width')).toBe('80')
+  view.unmount()
 })
