@@ -43,6 +43,8 @@ export function loader<T>(
   }
   const start = (load: Load<T>): Promise<void> => {
     generation += 1
+    cancel()
+    cancel = () => undefined
     controller?.abort()
     const mine = generation
     const current = () => generation === mine

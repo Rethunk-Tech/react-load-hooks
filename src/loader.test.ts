@@ -77,6 +77,15 @@ test('only the newest load lands', async () => {
   }
 })
 
+test('run supersedes a pending deferred start', async () => {
+  const { log, pending, runs } = harness(false)
+  runs.deps(['search'], () => Promise.resolve('search'))
+  await runs.run(() => Promise.resolve('page'))
+  pending[0]?.()
+  await flush()
+  expect(log).toEqual(['loading', 'loading', 'value page', 'idle'])
+})
+
 test('a superseded or stopped load has its signal aborted', async () => {
   const signals: AbortSignal[] = []
   const runs = loader<string>({
