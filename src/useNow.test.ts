@@ -1,4 +1,6 @@
 import { afterAll, afterEach, beforeEach, expect, jest, setSystemTime, test } from 'bun:test'
+import { createElement } from 'react'
+import { renderToString } from 'react-dom/server'
 
 const testing = await import('@testing-library/react')
 const { useNowValue, useSecondValue } = await import('./useNow.ts')
@@ -45,6 +47,17 @@ test('a watcher re-renders only when its answer changes, and the clock stops wit
   expect(jest.getTimerCount()).toBe(0)
   view.unmount()
   expect(jest.getTimerCount()).toBe(0)
+})
+
+test('useNowValue can render to a string on the server', () => {
+  function Label() {
+    return createElement(
+      'span',
+      null,
+      useNowValue((now) => String(now)),
+    )
+  }
+  expect(() => renderToString(createElement(Label))).not.toThrow()
 })
 
 test('the minute clock ticks once for every watcher and is idle when none is left', () => {

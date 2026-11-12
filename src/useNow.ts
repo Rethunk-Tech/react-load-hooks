@@ -44,7 +44,11 @@ function useClockValue<T extends string | number | boolean>(
   compute: (now: number) => T,
   on: boolean,
 ): T {
-  return useSyncExternalStore(on ? clock.subscribe : unwatched, () => compute(clock.read()))
+  return useSyncExternalStore(
+    on ? clock.subscribe : unwatched,
+    () => compute(clock.read()),
+    () => compute(Date.now()),
+  )
 }
 
 /** compute's answer from the minute clock; the component re-renders only when the answer changes, so compute returns a
