@@ -26,15 +26,16 @@ would upload.
 
 ## Files
 
-| File                                          | Holds                                                                                                                             |
-| --------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `src/index.ts`                                | The public surface                                                                                                                |
-| `src/loader.ts`                               | React-free newest-load-wins logic                                                                                                 |
-| `src/useLoaded.ts`, `src/useDebouncedLoad.ts` | The load hooks over `loader`                                                                                                      |
-| `src/coalescer.ts`                            | Per-key one-running, one-queued task runner                                                                                       |
-| `src/useDebouncedValue.ts`                    | Settled value                                                                                                                     |
-| `src/useStoredState.ts`                       | `localStorage` state and its plain read and write                                                                                 |
-| `src/useSize.ts`, `src/useWidth.ts`           | Element size and width                                                                                                            |
-| `src/sameValue.ts`                            | `sameValue`, `keepUnchanged`, `keepFields`: keep the stored value when a fresh answer is equal                                    |
-| `src/when.ts`                                 | `clockWhen`, `absoluteWhen`, `relativeWhen`: Intl time labels; the caller passes the locale and the translated "few seconds" text |
-| `src/useNow.ts`                               | Shared clocks                                                                                                                     |
+| File                                                                           | Holds                                                                                                                             |
+| ------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| `src/index.ts`                                                                 | The public surface                                                                                                                |
+| `src/loader.ts`                                                                | React-free newest-load-wins logic                                                                                                 |
+| `src/useLoaded.ts`, `src/useDebouncedLoad.ts`                                  | The load hooks over `loader`                                                                                                      |
+| `src/coalescer.ts`                                                             | Per-key one-running, one-queued task runner                                                                                       |
+| `src/useDebouncedValue.ts`                                                     | Settled value                                                                                                                     |
+| `src/useStoredState.ts`                                                        | `localStorage` state and its plain read and write                                                                                 |
+| `src/useSize.ts`, `src/useWidth.ts`                                            | Element size and width                                                                                                            |
+| `src/useOnWindowFocus.ts`, `src/useRestoreFocus.ts`, `src/usePopoverAnchor.ts` | Window focus, focus restore, and popover anchor                                                                                   |
+| `src/sameValue.ts`                                                             | `sameValue`, `keepUnchanged`, `keepFields`: keep the stored value when a fresh answer is equal                                    |
+| `src/when.ts`                                                                  | `clockWhen`, `absoluteWhen`, `relativeWhen`: Intl time labels; the caller passes the locale and the translated "few seconds" text |
+| `src/useNow.ts`                                                                | Shared clocks                                                                                                                     |
