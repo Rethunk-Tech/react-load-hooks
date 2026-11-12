@@ -32,7 +32,12 @@ export function useDebouncedLoad<T>(
           setError(e)
           latest.current.onError?.(e)
         },
-        loading: setLoading,
+        loading: (on) => {
+          setLoading(on)
+          if (on) {
+            setError(null)
+          }
+        },
         reset: () => setData(() => latest.current.initial),
       },
       {
