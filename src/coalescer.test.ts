@@ -31,6 +31,25 @@ test('asks made while one runs share one follow-up run, per key', async () => {
   expect(calls).toBe(4)
 })
 
+test('the follow-up is the latest ask; a middle one never runs', async () => {
+  const run = coalescer()
+  const first = gate()
+  const ran: string[] = []
+  const a = run('k', () => {
+    ran.push('a')
+    return first.promise
+  })
+  const b = run('k', async () => {
+    ran.push('b')
+  })
+  const c = run('k', async () => {
+    ran.push('c')
+  })
+  first.open()
+  await Promise.all([a, b, c])
+  expect(ran).toEqual(['a', 'c'])
+})
+
 test('a failed run still lets the queued one start', async () => {
   const run = coalescer()
   const first = gate()

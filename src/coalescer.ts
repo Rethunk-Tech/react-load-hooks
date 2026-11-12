@@ -2,6 +2,7 @@ interface Slot {
   settled: Promise<void>
   // The follow-up run asked for while this one runs, shared by every later asker.
   next: Promise<void> | null
+  latest: () => Promise<void>
 }
 
 const ignore = () => undefined
@@ -14,7 +15,7 @@ export function coalescer() {
   const running = new Map<string, Slot>()
   const start = (key: string, run: () => Promise<void>): Promise<void> => {
     const p = run()
-    const slot: Slot = { settled: Promise.resolve(), next: null }
+    const slot: Slot = { settled: Promise.resolve(), next: null, latest: run }
     slot.settled = p.then(ignore, ignore).then(() => {
       if (running.get(key) === slot) {
         running.delete(key)
@@ -28,7 +29,8 @@ export function coalescer() {
     if (!slot) {
       return start(key, run)
     }
-    slot.next ??= slot.settled.then(() => start(key, run))
+    slot.latest = run
+    slot.next ??= slot.settled.then(() => start(key, slot.latest))
     return slot.next
   }
 }
