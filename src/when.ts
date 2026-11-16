@@ -7,7 +7,8 @@ const FIRST_YEAR = 1970
 
 function parseWhen(value: string | number | Date): Date | undefined {
   const d = new Date(value)
-  if (Number.isNaN(d.getTime()) || d.getUTCFullYear() < FIRST_YEAR) {
+  // Unix 0 is 1 Jan 1970, so a year check alone would keep epoch.
+  if (Number.isNaN(d.getTime()) || d.getTime() <= 0 || d.getUTCFullYear() < FIRST_YEAR) {
     return undefined
   }
   return d

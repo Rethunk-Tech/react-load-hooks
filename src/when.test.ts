@@ -45,3 +45,9 @@ test('clockWhen writes the hour as the locale does', () => {
   expect(clockWhen(new Date(2026, 9, 2, 9, 5), 'en-US')).toMatch(/^9:05\sAM$/)
   expect(clockWhen('0001-01-01T00:00:00Z')).toBe('')
 })
+
+test('Unix epoch 0 is a zero time', () => {
+  expect(clockWhen(0)).toBe('')
+  expect(absoluteWhen(0)).toBe('')
+  expect(relativeWhen(0)).toBe('')
+})
