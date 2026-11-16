@@ -49,8 +49,6 @@ export function useStoredState<T>(
   }
   // Read once per key; a fresh `valid` or `fallback` identity must not re-parse storage.
   // biome-ignore lint/correctness/useExhaustiveDependencies: once per key
-  // Read once per key; a fresh `valid` or `fallback` identity must not re-parse storage.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: once per key
   useEffect(() => {
     const next = read(key, fallback, valid)
     setStored((prev) =>
