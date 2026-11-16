@@ -22,7 +22,7 @@ export function useLoaded<T>(
 ) {
   const { onError, keepAcrossKeys = false } =
     typeof options === 'function' ? { onError: options } : (options ?? {})
-  const [data, setData] = useState(initial)
+  const [data, setData] = useState(() => initial)
   const [loading, setLoading] = useState(load !== null)
   const [error, setError] = useState<unknown>(null)
   const latest = useRef({ load, initial, onError })

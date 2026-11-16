@@ -38,3 +38,23 @@ test('first render is immediate; later values settle after a quiet ms', () => {
     expect(view.result.current).toBe(step.want)
   }
 })
+
+test('a function value is stored, not called as a lazy initializer or updater', () => {
+  jest.useFakeTimers()
+  const initialFn = function initialFn() {
+    return 'from-fn'
+  }
+  const nextFn = function nextFn() {
+    return 'next'
+  }
+  const view = testing.renderHook(
+    ({ value }: { value: () => string }) => useDebouncedValue(value, 100),
+    { initialProps: { value: initialFn } },
+  )
+  expect(view.result.current).toBe(initialFn)
+  view.rerender({ value: nextFn })
+  testing.act(() => {
+    jest.advanceTimersByTime(100)
+  })
+  expect(view.result.current).toBe(nextFn)
+})

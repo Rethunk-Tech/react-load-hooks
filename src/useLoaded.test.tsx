@@ -61,3 +61,11 @@ test('useLoaded wires loader to state, onError, reload and unmount', async () =>
   await late.promise.catch(() => undefined)
   expect(seen).toEqual([boom])
 })
+
+test('a function initial is stored as data, not called as a lazy initializer', () => {
+  const initialFn = function initialFn() {
+    return 'from-fn'
+  }
+  const { result } = testing.renderHook(() => useLoaded(null, [], initialFn))
+  expect(result.current.data).toBe(initialFn)
+})
