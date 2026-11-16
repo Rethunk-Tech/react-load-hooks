@@ -24,6 +24,10 @@ function parseOrRaw(raw: string): unknown {
 
 function write(key: string, value: unknown) {
   try {
+    if (value === undefined) {
+      localStorage.removeItem(key)
+      return
+    }
     localStorage.setItem(key, JSON.stringify(value))
   } catch {
     // Storage can be blocked or full; the choice then lasts until the app closes.

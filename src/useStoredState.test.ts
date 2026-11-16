@@ -62,3 +62,9 @@ test('storage that throws reads as the fallback and writes nothing', () => {
     }
   }
 })
+
+test('writeStored of undefined removes the key', () => {
+  writeStored('stored-test.undef', 'keep')
+  writeStored('stored-test.undef', undefined)
+  expect(readStored('stored-test.undef', 'none', isText)).toBe('none')
+})
