@@ -49,6 +49,10 @@ export function useDebouncedLoad<T>(
       },
     ),
   )
+  // The reset happens in the effect, after a paint, so this render has to answer for a null load itself. `data` stays
+  // across new deps, but a new deps' load is already owed, so loading shows it and the old error no longer applies.
+  const idle = load === null
+  const moved = runs.changed(deps, load)
   // Runs after every render and acts only when the caller's deps changed: an effect cannot take a caller-supplied
   // dependency list.
   useEffect(() => {
@@ -56,9 +60,9 @@ export function useDebouncedLoad<T>(
   })
   useEffect(() => () => runs.stop(), [runs])
   return {
-    data,
-    loading,
-    error,
+    data: idle ? initial : data,
+    loading: idle ? false : moved || loading,
+    error: idle || moved ? null : error,
     run: (next: Load<T>) => runs.run(next),
   }
 }

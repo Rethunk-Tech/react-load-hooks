@@ -46,6 +46,9 @@ export function useLoaded<T>(
       { keepAcrossKeys },
     ),
   )
+  // The reset happens in the effect, after a paint, so this render has to answer for the change itself.
+  const moved = runs.changed(deps, load)
+  const idle = load === null
   // Runs after every render and starts a load only when the caller's deps changed: an effect cannot take a
   // caller-supplied dependency list.
   useEffect(() => {
@@ -53,5 +56,11 @@ export function useLoaded<T>(
   })
   useEffect(() => () => runs.stop(), [runs])
   const reload = useCallback(() => runs.run(latest.current.load), [runs])
-  return { data, setData, loading, error, reload }
+  return {
+    data: idle || (moved && !keepAcrossKeys) ? initial : data,
+    setData,
+    loading: idle ? false : moved || loading,
+    error: idle || moved ? null : error,
+    reload,
+  }
 }

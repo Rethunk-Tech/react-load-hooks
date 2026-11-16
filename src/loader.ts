@@ -33,6 +33,7 @@ export function loader<T>(
 ) {
   let generation = 0
   let seen: DependencyList | null = null
+  let idle = false
   let cancel: () => void = () => undefined
   let controller: AbortController | null = null
   const drop = () => {
@@ -42,6 +43,7 @@ export function loader<T>(
     controller = null
   }
   const start = (load: Load<T>): Promise<void> => {
+    idle = false
     generation += 1
     cancel()
     cancel = () => undefined
@@ -73,12 +75,17 @@ export function loader<T>(
   }
   const skip = () => {
     drop()
+    idle = true
     sink.reset()
     sink.loading(false)
   }
+  const changed = (deps: DependencyList, load: Load<T> | null) =>
+    !sameDeps(seen, deps) || (load === null) !== idle
   return {
+    /** Whether `deps` would act: new deps, or the null switch, which resets even on unchanged deps. */
+    changed,
     deps(deps: DependencyList, load: Load<T> | null) {
-      if (sameDeps(seen, deps)) {
+      if (!changed(deps, load)) {
         return
       }
       const fresh = seen !== null
@@ -87,6 +94,8 @@ export function loader<T>(
         skip()
         return
       }
+      // Ends idle now rather than in start, so a call repeated before defer fires does not restart the timer.
+      idle = false
       drop()
       if (fresh && !keepAcrossKeys) {
         sink.reset()

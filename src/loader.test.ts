@@ -1,6 +1,47 @@
 import { expect, test } from 'bun:test'
 import { loader } from './loader.ts'
 
+test('a null load resets the value and drops the in-flight answer even when the deps are unchanged', async () => {
+  const state = { value: 'INITIAL' as string, error: null as unknown, loading: false }
+  const runs = loader<string>({
+    value: (value) => {
+      state.value = value
+    },
+    error: (error) => {
+      state.error = error
+    },
+    loading: (on) => {
+      state.loading = on
+    },
+    reset: () => {
+      state.value = 'INITIAL'
+    },
+  })
+  let land: (value: string) => void = () => undefined
+  const signals: AbortSignal[] = []
+  const load = (signal: AbortSignal) => {
+    signals.push(signal)
+    return new Promise<string>((resolve) => {
+      land = resolve
+    })
+  }
+
+  runs.deps(['id'], load)
+  runs.deps(['id'], null)
+  expect({ ...state, aborted: signals[0]?.aborted }).toEqual({
+    value: 'INITIAL',
+    error: null,
+    loading: false,
+    aborted: true,
+  })
+
+  runs.deps(['id'], load)
+  expect(state.loading).toBe(true)
+  land('data')
+  await new Promise<void>((resolve) => setTimeout(resolve, 0))
+  expect(state).toEqual({ value: 'data', error: null, loading: false })
+})
+
 const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
 
 function harness(keepAcrossKeys: boolean) {
