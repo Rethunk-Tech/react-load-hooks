@@ -2,7 +2,17 @@
 // and defeats memoised rows. These keep the stored value whenever the answer is equal to it.
 
 export function sameValue(a: unknown, b: unknown): boolean {
-  return a === b || JSON.stringify(a) === JSON.stringify(b)
+  try {
+    return a === b || JSON.stringify(a, nonFinite) === JSON.stringify(b, nonFinite)
+  } catch {
+    // BigInt and cycles are not JSON; keep the fresh value rather than throw in render.
+    return false
+  }
+}
+
+// JSON.stringify otherwise writes NaN and Infinity as null.
+function nonFinite(_key: string, value: unknown) {
+  return typeof value === 'number' && !Number.isFinite(value) ? String(value) : value
 }
 
 /** next, with each item equal to the previous item of the same key replaced by that previous object. */
