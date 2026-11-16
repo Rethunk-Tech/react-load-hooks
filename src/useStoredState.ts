@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 function read<T>(key: string, fallback: T, valid: (value: unknown) => value is T): T {
   try {
@@ -40,12 +40,23 @@ export function useStoredState<T>(
   fallback: T,
   valid: (value: unknown) => value is T,
 ): [T, (value: T) => void] {
-  const [stored, setStored] = useState(() => ({ key, value: read(key, fallback, valid) }))
+  // Server has no localStorage; reading on the first client paint mismatches hydration.
+  const [stored, setStored] = useState(() => ({ key, value: fallback }))
   let value = stored.value
   if (stored.key !== key) {
-    value = read(key, fallback, valid)
+    value = fallback
     setStored({ key, value })
   }
+  // Read once per key; a fresh `valid` or `fallback` identity must not re-parse storage.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: once per key
+  // Read once per key; a fresh `valid` or `fallback` identity must not re-parse storage.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: once per key
+  useEffect(() => {
+    const next = read(key, fallback, valid)
+    setStored((prev) =>
+      prev.key === key && Object.is(prev.value, next) ? prev : { key, value: next },
+    )
+  }, [key])
   return [
     value,
     (next) => {
