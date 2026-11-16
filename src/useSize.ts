@@ -10,6 +10,7 @@ function useSize<T extends HTMLElement>(
   useLayoutEffect(() => {
     const el = ref.current
     if (!el) {
+      setSize((prev) => (prev.width === 0 && prev.height === 0 ? prev : { width: 0, height: 0 }))
       return
     }
     const apply = () =>

@@ -8,6 +8,7 @@ function useWidth<T extends HTMLElement>(): [RefCallback<T>, number] {
   // Measured before paint, so the first frame is laid out for the real width rather than 0.
   useLayoutEffect(() => {
     if (!el) {
+      setWidth(0)
       return
     }
     // Rendered before the browser paints the resize: a default-priority update would paint one frame laid out for the

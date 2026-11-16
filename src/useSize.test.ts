@@ -183,3 +183,68 @@ test('useWidth measures an element that mounts after the first layout', () => {
   expect(view.container.querySelector('[data-width]')?.getAttribute('data-width')).toBe('80')
   view.unmount()
 })
+
+function HideSize() {
+  const ref = useRef<HTMLDivElement | null>(null)
+  const size = useSize(ref)
+  const [show, setShow] = useState(true)
+  return createElement(
+    'div',
+    { 'data-width': String(size.width), 'data-height': String(size.height) },
+    createElement('button', { type: 'button', onClick: () => setShow(false) }, 'hide'),
+    show
+      ? createElement('div', {
+          ref: (node: HTMLDivElement | null) => {
+            if (node) {
+              setClientSize(node, 90, 30)
+            }
+            ref.current = node
+          },
+        })
+      : null,
+  )
+}
+
+function HideWidth() {
+  const [ref, width] = useWidth<HTMLDivElement>()
+  const [show, setShow] = useState(true)
+  return createElement(
+    'div',
+    { 'data-width': String(width) },
+    createElement('button', { type: 'button', onClick: () => setShow(false) }, 'hide'),
+    show
+      ? createElement('span', {
+          ref: (node: HTMLDivElement | null) => {
+            if (node) {
+              setClientSize(node, 80, 24)
+            }
+            ref(node)
+          },
+        })
+      : null,
+  )
+}
+
+test('useSize resets to 0 when the element unmounts', () => {
+  observers.length = 0
+  const view = testing.render(createElement(HideSize))
+  expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('90')
+  expect(view.container.firstElementChild?.getAttribute('data-height')).toBe('30')
+  testing.act(() => {
+    view.container.querySelector('button')?.click()
+  })
+  expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('0')
+  expect(view.container.firstElementChild?.getAttribute('data-height')).toBe('0')
+  view.unmount()
+})
+
+test('useWidth resets to 0 when the element unmounts', () => {
+  observers.length = 0
+  const view = testing.render(createElement(HideWidth))
+  expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('80')
+  testing.act(() => {
+    view.container.querySelector('button')?.click()
+  })
+  expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('0')
+  view.unmount()
+})
