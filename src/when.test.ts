@@ -13,6 +13,18 @@ test('relativeWhen is relative within a week and a date before that', () => {
   expect(relativeWhen(at(86_400_000), opts)).toBe('yesterday')
   expect(relativeWhen(at(3 * 86_400_000), opts)).toBe('3 days ago')
   expect(relativeWhen('2026-03-15T02:54:41Z', opts)).toBe('Mar 15, 2026')
+  expect(relativeWhen('2026-03-15T02:54:41Z', { ...opts, withTime: true })).toBe(
+    new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short' }).format(
+      new Date('2026-03-15T02:54:41Z'),
+    ),
+  )
+  expect(relativeWhen('2026-03-15T02:54:41Z', { ...opts, absolute: true })).toBe('Mar 15, 2026')
+  expect(relativeWhen(at(3 * 60_000), { ...opts, absolute: true })).toBe('Oct 2, 2026')
+  expect(relativeWhen('2026-03-15T02:54:41Z', { ...opts, absolute: true, withTime: true })).toBe(
+    new Intl.DateTimeFormat('en', { dateStyle: 'medium', timeStyle: 'short' }).format(
+      new Date('2026-03-15T02:54:41Z'),
+    ),
+  )
   expect(relativeWhen('0001-01-01T00:00:00Z', opts)).toBe('')
   expect(relativeWhen('nonsense', opts)).toBe('')
 })
@@ -50,4 +62,19 @@ test('Unix epoch 0 is a zero time', () => {
   expect(clockWhen(0)).toBe('')
   expect(absoluteWhen(0)).toBe('')
   expect(relativeWhen(0)).toBe('')
+})
+
+test('a non-RangeError from Intl is not swallowed', () => {
+  const Orig = Intl.DateTimeFormat
+  const boom = new TypeError('format failed')
+  Intl.DateTimeFormat = class extends Orig {
+    format(): string {
+      throw boom
+    }
+  }
+  try {
+    expect(() => clockWhen(Date.now(), 'en')).toThrow(boom)
+  } finally {
+    Intl.DateTimeFormat = Orig
+  }
 })
