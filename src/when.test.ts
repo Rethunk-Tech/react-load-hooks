@@ -68,10 +68,10 @@ test('a non-RangeError from Intl is not swallowed', () => {
   const Orig = Intl.DateTimeFormat
   const boom = new TypeError('format failed')
   Intl.DateTimeFormat = class extends Orig {
-    format(): string {
+    override format(): string {
       throw boom
     }
-  }
+  } as typeof Intl.DateTimeFormat
   try {
     expect(() => clockWhen(Date.now(), 'en')).toThrow(boom)
   } finally {
