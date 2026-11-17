@@ -13,3 +13,7 @@ run = '[ -n "$CI" ] || ./scripts/actionlint'
 # guard is what keeps one definition serving both hooks.
 [gates.gitleaks]
 run = '[ -n "$CI" ] || gitleaks git --redact --no-banner --log-level warn'
+
+# setup-bun's run-audit in CI; fail only on advisories whose fix has shipped.
+[gates.vuln]
+run = "bun /usr/local/src/com.github/Rethunk-Tech/gh-actions/audit-bun/audit.ts"
