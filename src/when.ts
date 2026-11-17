@@ -3,12 +3,11 @@ const HOUR = 60 * MINUTE
 const DAY = 24 * HOUR
 const DAYS_PER_WEEK = 7
 const WEEK = DAYS_PER_WEEK * DAY
-const FIRST_YEAR = 1970
 
 function parseWhen(value: string | number | Date): Date | undefined {
   const d = new Date(value)
-  // Unix 0 is 1 Jan 1970, so a year check alone would keep epoch.
-  if (Number.isNaN(d.getTime()) || d.getTime() <= 0 || d.getUTCFullYear() < FIRST_YEAR) {
+  // Unix 0 is 1 Jan 1970; callers use 0 as "no time".
+  if (Number.isNaN(d.getTime()) || d.getTime() <= 0) {
     return undefined
   }
   return d
