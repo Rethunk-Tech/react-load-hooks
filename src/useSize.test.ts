@@ -160,6 +160,16 @@ test('useWidth still returns the measured client width', () => {
   observers.length = 0
   const view = testing.render(createElement(WidthHost))
   expect(view.container.firstElementChild?.getAttribute('data-width')).toBe('64')
+
+  const el = view.container.firstElementChild
+  if (!(el instanceof HTMLElement)) {
+    throw new Error('expected a measured element')
+  }
+  setClientSize(el, 120, 20)
+  testing.act(() => {
+    observers.at(-1)?.fire()
+  })
+  expect(el.getAttribute('data-width')).toBe('120')
 })
 
 test('useSize measures an element that mounts after the first layout', () => {
