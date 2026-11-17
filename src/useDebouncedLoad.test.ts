@@ -45,3 +45,27 @@ test('a delayMs that changes between renders applies to the next scheduled load'
   await sleep(200)
   expect(view.result.current.data).toBe('b')
 })
+
+test('a pending delay is cancelled, run starts at once, and onError hears a failure', async () => {
+  const seen: unknown[] = []
+  const boom = new Error('offline')
+  const view = testing.renderHook(
+    ({ key }) =>
+      useDebouncedLoad(() => Promise.resolve(key), [key], {
+        initial: '',
+        delayMs: 80,
+        onError: (e) => seen.push(e),
+      }),
+    { initialProps: { key: 'stale' } },
+  )
+  view.rerender({ key: 'fresh' })
+  await sleep(20)
+  expect(view.result.current.data).toBe('')
+
+  await testing.act(() => view.result.current.run(() => Promise.resolve('page-2')))
+  expect(view.result.current.data).toBe('page-2')
+
+  await testing.act(() => view.result.current.run(() => Promise.reject(boom)))
+  expect(view.result.current.error).toBe(boom)
+  expect(seen).toEqual([boom])
+})
