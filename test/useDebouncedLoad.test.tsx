@@ -2,7 +2,10 @@ import { expect, test } from 'bun:test'
 import { render, waitFor } from '@testing-library/react'
 import { type Load, useDebouncedLoad } from '../src/index.ts'
 
-type Snapshot = { data: string; loading: boolean }
+interface Snapshot {
+  data: string
+  loading: boolean
+}
 
 function Probe({ load, seen }: { load: Load<string> | null; seen: Snapshot[] }) {
   const { data, loading } = useDebouncedLoad(load, [], { initial: 'INITIAL', delayMs: 0 })

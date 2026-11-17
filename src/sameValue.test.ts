@@ -54,8 +54,8 @@ test('sameValue compares by identity or JSON text', () => {
 })
 
 test('NaN is not null and non-JSON values compare false', () => {
-  expect(sameValue(NaN, null)).toBe(false)
-  expect(keepFields({ score: NaN }, { score: null }).score).toBe(null)
+  expect(sameValue(Number.NaN, null)).toBe(false)
+  expect(keepFields({ score: Number.NaN }, { score: null }).score).toBe(null)
   expect(sameValue(1n, 2n)).toBe(false)
   const cyclic: { self?: unknown } = {}
   cyclic.self = cyclic
