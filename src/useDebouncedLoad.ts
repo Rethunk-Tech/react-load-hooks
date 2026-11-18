@@ -50,7 +50,7 @@ export function useDebouncedLoad<T>(
     ),
   )
   // The reset happens in the effect, after a paint, so this render has to answer for a null load itself. `data` stays
-  // across new deps, but a new deps' load is already owed, so loading shows it and the old error no longer applies.
+  // across new deps, but a new deps' load is already owed, so loading shows it and error stays null until that load lands.
   const idle = load === null
   const moved = runs.changed(deps, load)
   // Runs after every render and acts only when the caller's deps changed: an effect cannot take a caller-supplied
