@@ -6,6 +6,28 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-11-21
+
+### Changed
+
+- Breaking: `useWidth` now returns a `RefCallback<T>` instead of a `RefObject<T | null>`, so it can see an element that mounts later. If you read `.current` off that ref, keep your own ref and call both from one callback: `ref={(el) => { mine.current = el; widthRef(el) }}`.
+
+### Added
+
+- `loader()` returns `changed(deps, load)`, which says whether a set of deps would act (new deps, or the null switch, which resets even on unchanged deps).
+
+### Fixed
+
+- `useWidth` observes an element that mounts later, and `useSize` resets to 0 when the measured node unmounts.
+- Load hooks reset on a deps change in the render that changes it, not one render late.
+- `useLoaded` stores a function initial value as the value instead of calling it.
+- `useDebouncedLoad` clears its error when a load starts.
+- `loader`'s `run()` cancels a pending debounce, and `coalescer` runs the latest queued task.
+- `useStoredState` reads storage after mount so SSR hydrates, and drops the key when you write `undefined`.
+- `useNow` provides a server snapshot.
+- `sameValue` keeps `NaN` distinct from `null`.
+- `when` treats the Unix epoch as a zero time, counts calendar days for relative day labels, and returns an empty string for an invalid locale.
+
 ## [0.5.0] - 2026-11-08
 
 ### Added
