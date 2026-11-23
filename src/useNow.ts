@@ -35,8 +35,16 @@ function tickingClock(period: number) {
   return { subscribe, read: () => (listeners.size === 0 ? Date.now() : now) }
 }
 
-const minuteClock = tickingClock(minute)
-const secondClock = tickingClock(second)
+const clocks = new Map<number, ReturnType<typeof tickingClock>>()
+function clockOf(period: number) {
+  let clock = clocks.get(period)
+  if (clock === undefined) {
+    clock = tickingClock(period)
+    clocks.set(period, clock)
+  }
+  return clock
+}
+const secondClock = clockOf(second)
 const unwatched = () => () => undefined
 
 function useClockValue<T extends string | number | boolean>(
@@ -51,10 +59,14 @@ function useClockValue<T extends string | number | boolean>(
   )
 }
 
-/** compute's answer from the minute clock; the component re-renders only when the answer changes, so compute returns a
- * primitive (a label rather than the time). */
-export function useNowValue<T extends string | number | boolean>(compute: (now: number) => T): T {
-  return useClockValue(minuteClock, compute, true)
+/** compute's answer from a clock that ticks every `everyMs` (a minute by default), shared by every watcher of that
+ * period; the component re-renders only when the answer changes, so compute returns a primitive (a label rather than
+ * the time). */
+export function useNowValue<T extends string | number | boolean>(
+  compute: (now: number) => T,
+  everyMs: number = minute,
+): T {
+  return useClockValue(clockOf(everyMs), compute, true)
 }
 
 /** useNowValue on a clock that ticks every second while `on`; compute should return a constant while off. */

@@ -10,6 +10,7 @@ Notable changes to `react-load-hooks`. The format follows
 
 - `useLoaded` and `useDebouncedLoad` take `keepWhenIdle` (a null load keeps `data`), `onValue` (hears each answer that lands) and `errorValue` (a failed load sets `data` to its answer); `loader()` takes `keepWhenIdle`. `LoadedOptions` is generic over the value.
 - `useInfoPopover()`: hover intent, a leave grace period, Escape, and long press on touch screens for a row's details popover. It returns `{ anchor, touch, close, bind, surface }` and renders nothing.
+- `useNowValue(compute, everyMs)` ticks on its own period; the default stays one minute.
 
 ### Changed
 

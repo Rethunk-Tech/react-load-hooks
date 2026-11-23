@@ -70,3 +70,18 @@ test('the minute clock ticks once for every watcher and is idle when none is lef
   b.unmount()
   expect(jest.getTimerCount()).toBe(0)
 })
+
+test('a clock with its own period ticks on it, beside the minute clock', () => {
+  const half = testing.renderHook(() => useNowValue((now) => now, 30_000))
+  const minute = testing.renderHook(() => useNowValue((now) => now))
+  const start = half.result.current
+  expect(jest.getTimerCount()).toBe(2)
+  testing.act(() => {
+    jest.advanceTimersByTime(30_000)
+  })
+  expect(half.result.current).toBe(start + 30_000)
+  expect(minute.result.current).toBe(start)
+  half.unmount()
+  minute.unmount()
+  expect(jest.getTimerCount()).toBe(0)
+})
