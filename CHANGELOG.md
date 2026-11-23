@@ -6,6 +6,8 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-23
+
 ### Added
 
 - `useLoaded` and `useDebouncedLoad` take `keepWhenIdle` (a null load keeps `data`), `onValue` (hears each answer that lands) and `errorValue` (a failed load sets `data` to its answer); `loader()` takes `keepWhenIdle`. `LoadedOptions` is generic over the value.
@@ -85,10 +87,13 @@ Notable changes to `react-load-hooks`. The format follows
 - `useStoredState`, `readStored`, `writeStored`: `localStorage` state under the caller's exact key.
 - `useWidth`, `useDebouncedValue`, `useNowValue`, `useSecondValue`.
 
+[Unreleased]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.7.0...HEAD
+[0.7.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.6.0...v0.7.0
+[0.6.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.5.0...v0.6.0
+[0.5.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.3.1...v0.4.0
+[0.3.1]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.3.0...v0.3.1
+[0.3.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/Rethunk-Tech/react-load-hooks/releases/tag/v0.1.0
-[Unreleased]: https://github.com/Rethunk-Tech//usr/local/src/com.github/Rethunk-Tech/react-load-hooks/compare/v0.5.0...HEAD
-[0.5.0]: https://github.com/Rethunk-Tech//usr/local/src/com.github/Rethunk-Tech/react-load-hooks/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.3.1...v0.4.0
-[0.3.1]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.3.0...v0.3.1
