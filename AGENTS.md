@@ -36,6 +36,7 @@ would upload.
 | `src/useStoredState.ts`                                                        | `localStorage` state and its plain read and write                                                                                 |
 | `src/useSize.ts`, `src/useWidth.ts`                                            | Element size and width                                                                                                            |
 | `src/useOnWindowFocus.ts`, `src/useRestoreFocus.ts`, `src/usePopoverAnchor.ts` | Window focus, focus restore, and popover anchor                                                                                   |
+| `src/useInfoPopover.ts`                                                        | When a row's details popover opens: hover intent, leave grace, long press                                                         |
 | `src/sameValue.ts`                                                             | `sameValue`, `keepUnchanged`, `keepFields`: keep the stored value when a fresh answer is equal                                    |
 | `src/when.ts`                                                                  | `clockWhen`, `absoluteWhen`, `relativeWhen`: Intl time labels; the caller passes the locale and the translated "few seconds" text |
 | `src/useNow.ts`                                                                | Shared clocks                                                                                                                     |
