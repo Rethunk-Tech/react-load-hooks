@@ -22,14 +22,19 @@ const now = (go: () => void) => {
 /**
  * useLoaded's and useDebouncedLoad's logic without React. Only the newest load lands: a later load, new deps or stop
  * drops the answer, error and end of every one before it. New deps reset the value unless keepAcrossKeys, and a null
- * load always does. `defer` starts a load, now or later, and returns what cancels the start.
+ * load does unless keepWhenIdle. `defer` starts a load, now or later, and returns what cancels the start.
  */
 export function loader<T>(
   sink: LoadSink<T>,
   {
     keepAcrossKeys = false,
+    keepWhenIdle = false,
     defer = now,
-  }: { keepAcrossKeys?: boolean; defer?: (go: () => void) => () => void } = {},
+  }: {
+    keepAcrossKeys?: boolean
+    keepWhenIdle?: boolean
+    defer?: (go: () => void) => () => void
+  } = {},
 ) {
   let generation = 0
   let seen: DependencyList | null = null
@@ -76,7 +81,9 @@ export function loader<T>(
   const skip = () => {
     drop()
     idle = true
-    sink.reset()
+    if (!keepWhenIdle) {
+      sink.reset()
+    }
     sink.loading(false)
   }
   const changed = (deps: DependencyList, load: Load<T> | null) =>

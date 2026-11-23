@@ -1,11 +1,13 @@
 import { type DependencyList, useEffect, useRef, useState } from 'react'
 import { type Load, loader } from './loader.ts'
+import type { LoadedOptions } from './useLoaded.ts'
 
 /**
  * useLoaded for input that changes on every key: `load` runs `delayMs` (read afresh each time a load is scheduled)
  * after `deps` last changed, and `data` keeps the last answer meanwhile. Only the newest run lands, so `onError` hears
- * only the newest failure. A null `load` resets `data` to `initial`. `run` starts another load at once, such as the
- * next page, under the same rule.
+ * only the newest failure. A null `load` resets `data` to `initial` unless `keepWhenIdle` (read on mount). `onValue` hears
+ * each answer that lands; with `errorValue`, a failed load sets `data` to its answer. `run` starts another load at once,
+ * such as the next page, under the same rule.
  */
 export function useDebouncedLoad<T>(
   load: Load<T> | null,
@@ -14,22 +16,30 @@ export function useDebouncedLoad<T>(
     initial,
     delayMs,
     onError,
-  }: { initial: T; delayMs: number; onError?: (error: unknown) => void },
+    keepWhenIdle = false,
+    onValue,
+    errorValue,
+  }: { initial: T; delayMs: number } & Omit<LoadedOptions<T>, 'keepAcrossKeys'>,
 ) {
   const [data, setData] = useState(initial)
   const [loading, setLoading] = useState(load !== null)
   const [error, setError] = useState<unknown>(null)
-  const latest = useRef({ initial, onError, delayMs })
-  latest.current = { initial, onError, delayMs }
+  const latest = useRef({ initial, onError, delayMs, onValue, errorValue })
+  latest.current = { initial, onError, delayMs, onValue, errorValue }
   const [runs] = useState(() =>
     loader<T>(
       {
         value: (value) => {
           setData(() => value)
           setError(null)
+          latest.current.onValue?.(value)
         },
         error: (e) => {
           setError(e)
+          const fail = latest.current.errorValue
+          if (fail) {
+            setData(() => fail(e))
+          }
           latest.current.onError?.(e)
         },
         loading: (on) => {
@@ -42,6 +52,7 @@ export function useDebouncedLoad<T>(
       },
       {
         keepAcrossKeys: true,
+        keepWhenIdle,
         defer: (go) => {
           const timer = globalThis.setTimeout(go, latest.current.delayMs)
           return () => globalThis.clearTimeout(timer)
@@ -60,7 +71,7 @@ export function useDebouncedLoad<T>(
   })
   useEffect(() => () => runs.stop(), [runs])
   return {
-    data: idle ? initial : data,
+    data: idle && !keepWhenIdle ? initial : data,
     loading: idle ? false : moved || loading,
     error: idle || moved ? null : error,
     run: (next: Load<T>) => runs.run(next),

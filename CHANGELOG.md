@@ -6,6 +6,10 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `useLoaded` and `useDebouncedLoad` take `keepWhenIdle` (a null load keeps `data`), `onValue` (hears each answer that lands) and `errorValue` (a failed load sets `data` to its answer); `loader()` takes `keepWhenIdle`. `LoadedOptions` is generic over the value.
+
 ### Changed
 
 - `useStoredState` keeps one value per key for the whole tab: every component on a key shows the same value and follows a write from any of them or from `writeStored`, and the first client render shows the stored value instead of the fallback. Server rendering and hydration still show the fallback. Writing `undefined` now shows the fallback, as a remount would.
