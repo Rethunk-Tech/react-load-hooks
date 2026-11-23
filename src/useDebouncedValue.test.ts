@@ -58,3 +58,24 @@ test('a function value is stored, not called as a lazy initializer or updater', 
   })
   expect(view.result.current).toBe(nextFn)
 })
+
+test('a value that immediate accepts applies in the same render, cancelling the pending one', () => {
+  jest.useFakeTimers()
+  const view = testing.renderHook(
+    ({ value }: { value: string }) => useDebouncedValue(value, 100, { immediate: (v) => v === '' }),
+    { initialProps: { value: 'a' } },
+  )
+  view.rerender({ value: 'ab' })
+  view.rerender({ value: '' })
+  expect(view.result.current).toBe('')
+  testing.act(() => {
+    jest.advanceTimersByTime(100)
+  })
+  expect(view.result.current).toBe('')
+  view.rerender({ value: 'c' })
+  expect(view.result.current).toBe('')
+  testing.act(() => {
+    jest.advanceTimersByTime(100)
+  })
+  expect(view.result.current).toBe('c')
+})
