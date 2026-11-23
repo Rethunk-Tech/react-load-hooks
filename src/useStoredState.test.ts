@@ -126,3 +126,43 @@ test('hydrateRoot matches the fallback HTML, then storage replaces it after moun
     localStorage.removeItem('stored-test.ssr')
   }
 })
+
+const isNumber = (v: unknown): v is number => typeof v === 'number'
+
+function SharedProbe({ name, seen }: { name: string; seen: string[] }) {
+  const [value, setValue] = useStoredState('stored-test.shared', 0, isNumber)
+  seen.push(`${name}:${value}`)
+  return createElement('button', {
+    type: 'button',
+    'data-testid': name,
+    onClick: () => setValue(value + 1),
+  })
+}
+
+test('every component on one key shows the stored value from its first render and follows a write', () => {
+  localStorage.setItem('stored-test.shared', '5')
+  const seen: string[] = []
+  const view = testing.render(
+    createElement('div', null, [
+      createElement(SharedProbe, { key: 'a', name: 'a', seen }),
+      createElement(SharedProbe, { key: 'b', name: 'b', seen }),
+    ]),
+  )
+  expect(seen).toEqual(['a:5', 'b:5'])
+  testing.fireEvent.click(view.getByTestId('a'))
+  expect(seen.slice(-2)).toEqual(['a:6', 'b:6'])
+  expect(localStorage.getItem('stored-test.shared')).toBe('6')
+  testing.act(() => writeStored('stored-test.shared', 9))
+  expect(seen.slice(-2)).toEqual(['a:9', 'b:9'])
+  view.unmount()
+  localStorage.setItem('stored-test.shared', 'not json')
+  const later = testing.renderHook(() => useStoredState('stored-test.shared', 0, isNumber))
+  expect(later.result.current[0]).toBe(0)
+  localStorage.setItem('stored-test.bare-hook', 'plain')
+  const bare = testing.renderHook(() => useStoredState('stored-test.bare-hook', '', isText))
+  expect(bare.result.current[0]).toBe('plain')
+  later.unmount()
+  bare.unmount()
+  localStorage.removeItem('stored-test.shared')
+  localStorage.removeItem('stored-test.bare-hook')
+})

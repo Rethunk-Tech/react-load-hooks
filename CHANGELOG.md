@@ -6,6 +6,10 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- `useStoredState` keeps one value per key for the whole tab: every component on a key shows the same value and follows a write from any of them or from `writeStored`, and the first client render shows the stored value instead of the fallback. Server rendering and hydration still show the fallback. Writing `undefined` now shows the fallback, as a remount would.
+
 ## [0.6.0] - 2026-11-21
 
 ### Changed
