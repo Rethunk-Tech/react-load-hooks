@@ -6,6 +6,10 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- `usePopoverAnchor` returns `open(el)`, which anchors to any element (null closes).
+
 ## [0.7.0] - 2026-11-23
 
 ### Added
