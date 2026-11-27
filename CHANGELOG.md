@@ -6,6 +6,8 @@ Notable changes to `react-load-hooks`. The format follows
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-27
+
 ### Added
 
 - `usePopoverAnchor` returns `open(el)`, which anchors to any element (null closes).
@@ -91,7 +93,8 @@ Notable changes to `react-load-hooks`. The format follows
 - `useStoredState`, `readStored`, `writeStored`: `localStorage` state under the caller's exact key.
 - `useWidth`, `useDebouncedValue`, `useNowValue`, `useSecondValue`.
 
-[Unreleased]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.7.0...HEAD
+[Unreleased]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.8.0...HEAD
+[0.8.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.7.0...v0.8.0
 [0.7.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.6.0...v0.7.0
 [0.6.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/Rethunk-Tech/react-load-hooks/compare/v0.4.0...v0.5.0
